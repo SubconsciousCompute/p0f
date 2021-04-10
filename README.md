@@ -1,2 +1,7 @@
 # p0f
-p0f version 3.09b with CMake 
+
+This is a personal fork of p0f project. I added  cmake build system and added
+CI pipeline.
+
+
+See the `README` file from the original distribution.
