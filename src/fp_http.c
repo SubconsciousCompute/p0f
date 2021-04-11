@@ -641,7 +641,7 @@ static u8* dump_flags(struct http_sig* hsig, struct http_sig_record* m) {
   static u8* ret;
   u32 rlen = 0;
 
-  RETF("");
+  // RETF("");
 
   if (hsig->dishonest) RETF(" dishonest");
   if (!hsig->sw) RETF(" anonymous");

@@ -880,7 +880,7 @@ static u8* dump_flags(struct packet_data* pk, struct tcp_sig* ts) {
   static u8* ret;
   u32 rlen = 0;
 
-  RETF("");
+  // RETF("");
 
   if (ts->matched) {
 

@@ -422,6 +422,24 @@ static void list_interfaces(void) {
 
 }
 
+static u8* find_interface_unix() {
+
+  char pcap_err[PCAP_ERRBUF_SIZE];
+  pcap_if_t *dev;
+
+  if (pcap_findalldevs(&dev, pcap_err) == -1)
+    FATAL("pcap_findalldevs: %s\n", pcap_err);
+
+  do {
+      u8* ret = DFL_ck_strdup((u8*)dev->name);
+      pcap_freealldevs(dev);
+      return ret;
+  } while ((dev = dev->next));
+
+  FATAL("Interface not found (use -L to list all).");
+
+}
+
 
 
 #ifdef __CYGWIN__
@@ -485,7 +503,8 @@ static void prepare_pcap(void) {
          Also, this returns something stupid on Windows, but hey... */
      
       if (!access("/sys/class/net", R_OK | X_OK) || errno == ENOENT)
-        use_iface = (u8*)pcap_lookupdev(pcap_err);
+        // use_iface = (u8*)pcap_lookupdev(pcap_err); // deprecated.
+        use_iface = find_interface_unix();
 
       if (!use_iface)
         FATAL("libpcap is out of ideas; use -i to specify interface.");
@@ -1228,7 +1247,7 @@ int main(int argc, char** argv) {
   if (read_file) offline_event_loop(); else live_event_loop();
 
   if (!daemon_mode)
-    SAYF("\nAll done. Processed %llu packets.\n", packet_cnt);
+    SAYF("\nAll done. Processed %lu packets.\n", packet_cnt);
 
 #ifdef DEBUG_BUILD
   destroy_all_hosts();

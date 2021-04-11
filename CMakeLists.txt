@@ -15,6 +15,8 @@ set(P0F_VERSION 3.09b)
 # Configuration
 #
 option(WITH_TOOLS "Build tools" ON) 
+option(WITH_ASAN  "Enable ASan (Address Sanitizer)" OFF)
+option(STRICT_COMPILATION  "Enable compilation in strict mode" ON)
 
 #
 # Search dependencies
@@ -31,11 +33,22 @@ if(WITH_TOOLS)
     add_subdirectory(src/tools)
 endif()
 
+if(WITH_ASAN)
+    set(CMAKE_BUILD_TYPE Debug)
+    set(CMAKE_EXE_LINKER_FLAGS 
+        "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+endif(WITH_ASAN)
+
+if(STRICT_COMPILATION)
+    add_definitions(-Wall -Werror)
+endif()
+
 #
 # Targets 
 #
 set(P0F_CONFIG_FILE ${CMAKE_SOURCE_DIR}/p0f.fp)
-add_executable(p0f src/p0f.c 
+add_executable(p0f 
+    src/p0f.c 
     src/fp_http.c 
     src/fp_mtu.c 
     src/fp_tcp.c 
