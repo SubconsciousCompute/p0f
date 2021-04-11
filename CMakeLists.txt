@@ -27,6 +27,7 @@ find_package(PCAP REQUIRED)
 # Build configuration
 #
 add_definitions(-DVERSION="${P0F_VERSION}")
+add_definitions(-DALIGN_ACCESS)
 include_directories(${PCAP_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/src)
 
 if(WITH_TOOLS)

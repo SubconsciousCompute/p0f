@@ -224,7 +224,8 @@ static inline u8* DFL_ck_memdup_str(u8* mem, u32 size) {
   if (!mem || !size) return NULL;
 
   ALLOC_CHECK_SIZE(size);
-  ret = malloc(size + ALLOC_OFF + 1);
+  ret = malloc(size + ALLOC_OFF + 1 + ALLOC_OFF); /* Now ASAN does not complain 
+                                                     in lookup_hdr function. */
   ALLOC_CHECK_RESULT(ret, size);
   
   ret += ALLOC_OFF;
