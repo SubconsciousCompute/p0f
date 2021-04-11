@@ -26,10 +26,12 @@ using namespace std;
 string socket_path_;
 bool stop_soon_ = false;
 
-extern void
-http_init(void);
-extern void
-read_config(u8* fname);
+extern "C"
+{
+    extern void http_init(void);
+
+    extern void read_config(u8* fname);
+}
 
 void
 abort_handler(int sig)
