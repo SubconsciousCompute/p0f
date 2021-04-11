@@ -6,20 +6,22 @@
  */
 
 #include "pybind11/pybind11.h"
+
 namespace py = pybind11;
+using namespace pybind11::literals;
 
 #include <iostream>
 using namespace std;
 
-int p0f_start()
+int p0f_server(const string& socket)
 {
-    cout << "Starting client." << endl;
+    cout << "Starting client: " << socket << endl;
     return 0;
 }
 
-PYBIND11_MODULE(p0f, m) 
+PYBIND11_MODULE(p0f, m)
 {
-    // m.doc() = "p0f experimental plugin.";
+    m.doc() = "p0f experimental plugin.";
 
-    // m.def("start", &p0f_start, "start the server.");
-
+    m.def("serve", &p0f_server, "start the server.");
+}

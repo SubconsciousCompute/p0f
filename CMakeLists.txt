@@ -54,11 +54,15 @@ endif()
 # Targets 
 #
 set(P0F_CONFIG_FILE ${CMAKE_SOURCE_DIR}/p0f.fp)
-add_executable(p0f src/p0f.c src/fp_http.c src/fp_mtu.c src/fp_tcp.c 
+add_library(p0f STATIC src/fp_http.c src/fp_mtu.c src/fp_tcp.c 
     src/process.c src/readfp.c src/api.c)
-
 target_link_libraries(p0f PRIVATE ${PCAP_LIBRARY})
-add_custom_command(TARGET p0f POST_BUILD
+
+add_executable(p0f-bin src/p0f.c)
+set_target_properties(p0f-bin PROPERTIES OUTPUT_NAME p0f)
+target_link_libraries(p0f-bin PRIVATE p0f)
+
+add_custom_command(TARGET p0f-bin POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${P0F_CONFIG_FILE} ${CMAKE_BINARY_DIR}
     VERBATIM)
 
@@ -66,7 +70,7 @@ add_custom_command(TARGET p0f POST_BUILD
 # install
 #
 include(GNUInstallDirs)
-install(TARGETS p0f RUNTIME DESTINATION bin)
+install(TARGETS p0f-bin RUNTIME DESTINATION bin)
 install(FILES ${P0F_CONFIG_FILE} TYPE SYSCONF)
 install(DIRECTORY docs/ TYPE DOC) 
 
