@@ -1035,6 +1035,8 @@ static void offline_event_loop(void) {
 
 /* Main entry point */
 
+#ifndef PYTHON_MODULE
+
 int main(int argc, char** argv) {
 
   s32 r;
@@ -1257,3 +1259,5 @@ int main(int argc, char** argv) {
   return 0;
 
 }
+
+#endif /* !PYTHON_MODULE  */

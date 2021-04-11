@@ -54,10 +54,15 @@ endif()
 # Targets 
 #
 set(P0F_CONFIG_FILE ${CMAKE_SOURCE_DIR}/p0f.fp)
+
+# static library (for reuse)
 add_library(p0f STATIC src/fp_http.c src/fp_mtu.c src/fp_tcp.c 
     src/process.c src/readfp.c src/api.c)
+
+set_target_properties(p0f PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_link_libraries(p0f PRIVATE ${PCAP_LIBRARY})
 
+# Main executable
 add_executable(p0f-bin src/p0f.c)
 set_target_properties(p0f-bin PROPERTIES OUTPUT_NAME p0f)
 target_link_libraries(p0f-bin PRIVATE p0f)

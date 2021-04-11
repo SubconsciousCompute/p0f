@@ -13,9 +13,24 @@ using namespace pybind11::literals;
 #include <iostream>
 using namespace std;
 
-int p0f_server(const string& socket)
+
+string socket_path_;
+
+
+int p0f_server_start(const string& socket)
 {
+    socket_path_ = socket;
     cout << "Starting client: " << socket << endl;
+
+    return 0;
+}
+
+int p0f_server_stop()
+{
+    if(socket_path_.empty())
+        cerr << "No socket found." << endl;
+
+    cout << "Stoping client: " << socket_path_ << endl;
     return 0;
 }
 
@@ -23,5 +38,8 @@ PYBIND11_MODULE(p0f, m)
 {
     m.doc() = "p0f experimental plugin.";
 
-    m.def("serve", &p0f_server, "start the server.");
+    m.def("start", &p0f_server_start, "start the server.");
+    m.def("stop", &p0f_server_stop, "stop the server.");
+
+    m.attr("__version__") = VERSION;
 }
