@@ -16,7 +16,7 @@ set(P0F_VERSION 3.09b)
 #
 option(WITH_TOOLS "Build tools" ON) 
 option(WITH_ASAN  "Enable ASan (Address Sanitizer)" OFF)
-option(STRICT_COMPILATION  "Enable compilation in strict mode" ON)
+option(STRICT_COMPILATION  "Enable compilation in strict mode" OFF)
 
 #
 # Search dependencies
@@ -26,6 +26,7 @@ find_package(PCAP REQUIRED)
 #
 # Build configuration
 #
+add_definitions(-Wall)
 add_definitions(-DVERSION="${P0F_VERSION}")
 add_definitions(-DALIGN_ACCESS)
 include_directories(${PCAP_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/src)
@@ -41,7 +42,7 @@ if(WITH_ASAN)
 endif(WITH_ASAN)
 
 if(STRICT_COMPILATION)
-    add_definitions(-Wall -Werror)
+    add_definitions(-Werror)
 endif()
 
 #
