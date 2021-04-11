@@ -16,6 +16,7 @@ set(P0F_VERSION 3.09b)
 #
 option(WITH_TOOLS "Build tools" ON) 
 option(WITH_ASAN  "Enable ASan (Address Sanitizer)" OFF)
+option(WITH_PYTHON  "Build python extention" ON)
 option(STRICT_COMPILATION  "Enable compilation in strict mode" OFF)
 
 #
@@ -34,6 +35,10 @@ if(WITH_TOOLS)
     add_subdirectory(src/tools)
 endif()
 
+if(WITH_PYTHON)
+    add_subdirectory(py)
+endif()
+
 if(WITH_ASAN)
     set(CMAKE_BUILD_TYPE Debug)
     set(CMAKE_EXE_LINKER_FLAGS 
@@ -48,14 +53,9 @@ endif()
 # Targets 
 #
 set(P0F_CONFIG_FILE ${CMAKE_SOURCE_DIR}/p0f.fp)
-add_executable(p0f 
-    src/p0f.c 
-    src/fp_http.c 
-    src/fp_mtu.c 
-    src/fp_tcp.c 
-    src/process.c 
-    src/readfp.c 
-    src/api.c)
+set(P0F_SRC_FILES src/p0f.c src/fp_http.c src/fp_mtu.c src/fp_tcp.c 
+    src/process.c src/readfp.c src/api.c) 
+add_executable(p0f ${P0F_SRC_FILES})
 
 target_link_libraries(p0f PRIVATE ${PCAP_LIBRARY})
 add_custom_command(TARGET p0f POST_BUILD
