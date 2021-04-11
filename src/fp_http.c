@@ -85,6 +85,7 @@ static s32 lookup_hdr(u8* name, u32 len, u8 create) {
   if (!create) return -1;
 
   hdr_names = DFL_ck_realloc(hdr_names, (hdr_cnt + 1) * sizeof(u8*));
+
   hdr_names[hdr_cnt] = DFL_ck_memdup_str(name, len);
 
   hdr_by_hash[bucket] = DFL_ck_realloc(hdr_by_hash[bucket],
