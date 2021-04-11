@@ -36,6 +36,7 @@ if(WITH_TOOLS)
 endif()
 
 if(WITH_PYTHON)
+    add_subdirectory(external/pybind11)
     add_subdirectory(py)
 endif()
 
@@ -53,9 +54,8 @@ endif()
 # Targets 
 #
 set(P0F_CONFIG_FILE ${CMAKE_SOURCE_DIR}/p0f.fp)
-set(P0F_SRC_FILES src/p0f.c src/fp_http.c src/fp_mtu.c src/fp_tcp.c 
-    src/process.c src/readfp.c src/api.c) 
-add_executable(p0f ${P0F_SRC_FILES})
+add_executable(p0f src/p0f.c src/fp_http.c src/fp_mtu.c src/fp_tcp.c 
+    src/process.c src/readfp.c src/api.c)
 
 target_link_libraries(p0f PRIVATE ${PCAP_LIBRARY})
 add_custom_command(TARGET p0f POST_BUILD
