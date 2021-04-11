@@ -2,7 +2,8 @@
 
 # p0f 
 
-Version 3.09b + CMake + Minor Tweaks.
+- Version 3.09b + CMake + Minor Tweaks.
+- There is an attempt to make a Python extension using `pybind11` on `python` branch.
 
 This is a personal fork of [p0f](https://lcamtuf.coredump.cx/p0f3/). `p0f` is
 written and maintained by a super-human named Michal Zalewski. 
