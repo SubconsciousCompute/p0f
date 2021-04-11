@@ -3,7 +3,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
-pybind11_add_module(pyp0f p0f.cpp ../src/p0f.c)
+pybind11_add_module(pyp0f p0f.cpp)
 
 set_target_properties(pyp0f PROPERTIES OUTPUT_NAME p0f)
 target_compile_options(pyp0f PUBLIC -DPYTHON_MODULE)
