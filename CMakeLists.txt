@@ -18,6 +18,7 @@ option(WITH_TOOLS "Build tools" ON)
 option(WITH_ASAN  "Enable ASan (Address Sanitizer)" OFF)
 option(STRICT_COMPILATION  "Enable compilation in strict mode" OFF)
 option(ENABLE_SHARED_LIBRARY "Generation shared library" ON)
+option(ENABLE_STATIC_LIBRARY "Generation shared library" ON)
 
 #
 # Search dependencies
@@ -49,32 +50,29 @@ endif()
 # Targets
 #
 set(P0F_CONFIG_FILE ${CMAKE_SOURCE_DIR}/p0f.fp)
+set(SRC_FILES src/fp_http.c src/fp_mtu.c src/fp_tcp.c src/process.c src/readfp.c src/api.c)
 
 if(ENABLE_SHARED_LIBRARY)
-    add_library(p0f SHARED
-        src/fp_http.c
-        src/fp_mtu.c
-        src/fp_tcp.c
-        src/process.c
-        src/readfp.c
-        src/api.c)
+    add_library(p0f SHARED ${SRC_FILES})
     target_link_libraries(p0f PRIVATE ${PCAP_LIBRARY})
 endif()
 
-add_executable(p0f-exe
-    src/p0f.c
-    src/fp_http.c
-    src/fp_mtu.c
-    src/fp_tcp.c
-    src/process.c
-    src/readfp.c
-    src/api.c)
+if(ENABLE_STATIC_LIBRARY)
+    add_library(p0f-static STATIC ${SRC_FILES})
+    target_link_libraries(p0f-static PRIVATE ${PCAP_LIBRARY})
+    set_target_properties(p0f-static PROPERTIES OUTPUT_NAME libp0f.a POSITION_INDEPENDENT_CODE ON)
+endif()
+
+add_executable(p0f-exe src/p0f.c)
 set_target_properties(p0f-exe PROPERTIES OUTPUT_NAME p0f)
 
-target_link_libraries(p0f-exe PRIVATE ${PCAP_LIBRARY})
+target_link_libraries(p0f-exe PRIVATE ${PCAP_LIBRARY} p0f-static)
+
 add_custom_command(TARGET p0f POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${P0F_CONFIG_FILE} ${CMAKE_BINARY_DIR}
     VERBATIM)
+
+add_subdirectory(nim)
 
 #
 # install
