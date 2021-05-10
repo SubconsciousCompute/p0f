@@ -17,6 +17,7 @@ set(P0F_VERSION 3.09b)
 option(WITH_TOOLS "Build tools" ON)
 option(WITH_ASAN  "Enable ASan (Address Sanitizer)" OFF)
 option(STRICT_COMPILATION  "Enable compilation in strict mode" OFF)
+option(ENABLE_SHARED_LIBRARY "Generation shared library" ON)
 
 #
 # Search dependencies
@@ -48,14 +49,17 @@ endif()
 # Targets
 #
 set(P0F_CONFIG_FILE ${CMAKE_SOURCE_DIR}/p0f.fp)
-add_library(p0f
-    src/fp_http.c
-    src/fp_mtu.c
-    src/fp_tcp.c
-    src/process.c
-    src/readfp.c
-    src/api.c)
-target_link_libraries(p0f PRIVATE ${PCAP_LIBRARY})
+
+if(ENABLE_SHARED_LIBRARY)
+    add_library(p0f SHARED
+        src/fp_http.c
+        src/fp_mtu.c
+        src/fp_tcp.c
+        src/process.c
+        src/readfp.c
+        src/api.c)
+    target_link_libraries(p0f PRIVATE ${PCAP_LIBRARY})
+endif()
 
 add_executable(p0f-exe
     src/p0f.c
@@ -77,7 +81,9 @@ add_custom_command(TARGET p0f POST_BUILD
 #
 include(GNUInstallDirs)
 install(TARGETS p0f-exe RUNTIME DESTINATION bin)
-install(TARGETS p0f LIBRARY DESTINATION lib)
+if(ENABLE_SHARED_LIBRARY)
+    install(TARGETS p0f LIBRARY DESTINATION lib)
+endif()
 install(FILES ${P0F_CONFIG_FILE} TYPE SYSCONF)
 install(DIRECTORY docs/ TYPE DOC)
 
