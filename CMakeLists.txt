@@ -60,7 +60,7 @@ endif()
 if(ENABLE_STATIC_LIBRARY)
     add_library(p0f-static STATIC ${SRC_FILES})
     target_link_libraries(p0f-static PRIVATE ${PCAP_LIBRARY})
-    set_target_properties(p0f-static PROPERTIES OUTPUT_NAME libp0f.a POSITION_INDEPENDENT_CODE ON)
+    set_target_properties(p0f-static PROPERTIES OUTPUT_NAME p0f POSITION_INDEPENDENT_CODE ON)
 endif()
 
 add_executable(p0f-exe src/p0f.c)

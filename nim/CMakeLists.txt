@@ -1,4 +1,4 @@
-set(NIM_FLAGS "-d:release")
+set(NIM_FLAGS -d:release --passL="-L$<TARGET_FILE_DIR:p0f-static> -lp0f-static")
 
 add_custom_target(p0fa ALL
     DEPENDS p0f-static
@@ -6,4 +6,3 @@ add_custom_target(p0fa ALL
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Generating nim binaries"
     VERBATIM)
-
