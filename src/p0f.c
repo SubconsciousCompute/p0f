@@ -83,7 +83,7 @@ u32
   host_idle_limit = HOST_IDLE_LIMIT;    /* Host cache idle timeout            */
 
 static struct api_client *api_cl;       /* Array with API client state        */
-          
+
 static s32 null_fd = -1,                /* File descriptor of /dev/null       */
            api_fd = -1;                 /* API socket descriptor              */
 
@@ -94,7 +94,7 @@ static u8 stop_soon;                    /* Ctrl-C or so pressed?              */
 u8 daemon_mode;                         /* Running in daemon mode?            */
 
 static u8 set_promisc;                  /* Use promiscuous mode?              */
-         
+
 static pcap_t *pt;                      /* PCAP capture thingy                */
 
 s32 link_type;                          /* PCAP link type                     */
@@ -195,7 +195,7 @@ static void close_spare_fds(void) {
 
   if (!d) {
     /* Best we could do... */
-    for (i = 3; i < 256; i++) 
+    for (i = 3; i < 256; i++)
       if (!close(i)) closed++;
     return;
   }
@@ -286,7 +286,7 @@ static void open_api(void) {
 
   if (bind(api_fd, (struct sockaddr*)&u, sizeof(u)))
     PFATAL("bind() on '%s' failed.", api_sock);
-  
+
   umask(old_umask);
 
   if (listen(api_fd, api_max_conn))
@@ -319,7 +319,7 @@ void start_observation(char* keyword, u8 field_cnt, u8 to_srv,
     SAYF("%s/%u (%s) ]-\n|\n", addr_to_str(f->server->addr, f->client->ip_ver),
          f->srv_port, keyword);
 
-    SAYF("| %-8s = %s/%u\n", to_srv ? "client" : "server", 
+    SAYF("| %-8s = %s/%u\n", to_srv ? "client" : "server",
          addr_to_str(to_srv ? f->client->addr :
          f->server->addr, f->client->ip_ver),
          to_srv ? f->cli_port : f->srv_port);
@@ -501,7 +501,7 @@ static void prepare_pcap(void) {
 
       /* See the earlier note on libpcap SEGV - same problem here.
          Also, this returns something stupid on Windows, but hey... */
-     
+
       if (!access("/sys/class/net", R_OK | X_OK) || errno == ENOENT)
         // use_iface = (u8*)pcap_lookupdev(pcap_err); // deprecated.
         use_iface = find_interface_unix();
@@ -523,12 +523,12 @@ static void prepare_pcap(void) {
       if (sscanf((char*)use_iface, "%u", &iface_id) == 1) {
         use_iface = find_interface(iface_id);
       }
-  
+
     }
 
     pt = pcap_open_live((char*)use_iface, SNAPLEN, set_promisc, 250, pcap_err);
 
-#else 
+#else
 
     /* PCAP timeouts tend to be broken, so we'll use a very small value
        and rely on select() instead. */
@@ -817,7 +817,7 @@ static void live_event_loop(void) {
 
   pfd_count = regen_pfds(pfds, ctable);
 
-  if (!daemon_mode) 
+  if (!daemon_mode)
     SAYF("[+] Entered main event loop.\n\n");
 
   while (!stop_soon) {
@@ -864,7 +864,7 @@ poll_again:
 
           close(pfds[cur].fd);
           ctable[cur]->fd = -1;
- 
+
           pfd_count = regen_pfds(pfds, ctable);
           goto poll_again;
 
@@ -883,7 +883,7 @@ poll_again:
           if (ctable[cur]->in_off < sizeof(struct p0f_api_query))
             FATAL("Inconsistent p0f_api_response state.\n");
 
-          i = write(pfds[cur].fd, 
+          i = write(pfds[cur].fd,
                    ((char*)&ctable[cur]->out_data) + ctable[cur]->out_off,
                    sizeof(struct p0f_api_response) - ctable[cur]->out_off);
 
@@ -903,7 +903,7 @@ poll_again:
       }
 
       if (pfds[cur].revents & POLLIN) switch (cur) {
- 
+
         case 0:
 
           /* Process traffic on the capture interface. */
@@ -956,7 +956,7 @@ poll_again:
           if (ctable[cur]->in_off >= sizeof(struct p0f_api_query))
             FATAL("Inconsistent p0f_api_query state.\n");
 
-          i = read(pfds[cur].fd, 
+          i = read(pfds[cur].fd,
                    ((char*)&ctable[cur]->in_data) + ctable[cur]->in_off,
                    sizeof(struct p0f_api_query) - ctable[cur]->in_off);
 
@@ -989,7 +989,7 @@ poll_again:
 
 #else
 
-  if (!daemon_mode) 
+  if (!daemon_mode)
     SAYF("[+] Entered main event loop.\n\n");
 
   /* Ugh. The only way to keep SIGINT and other signals working is to have this
@@ -1019,7 +1019,7 @@ poll_again:
 
 static void offline_event_loop(void) {
 
-  if (!daemon_mode) 
+  if (!daemon_mode)
     SAYF("[+] Processing capture data.\n\n");
 
   while (!stop_soon)  {
@@ -1033,8 +1033,9 @@ static void offline_event_loop(void) {
 }
 
 
-/* Main entry point */
+#ifndef NO_MAIN
 
+/* Main entry point */
 int main(int argc, char** argv) {
 
   s32 r;
@@ -1121,7 +1122,7 @@ int main(int argc, char** argv) {
       break;
 
     case 'p':
-    
+
       if (set_promisc)
         FATAL("Even more promiscuous? People will start talking!");
 
@@ -1145,7 +1146,7 @@ int main(int argc, char** argv) {
 
 #else
 
-      if (api_sock) 
+      if (api_sock)
         FATAL("Multiple -s options not supported.");
 
       api_sock = (u8*)optarg;
@@ -1202,12 +1203,12 @@ int main(int argc, char** argv) {
 
 #ifdef __CYGWIN__
 
-    if (switch_user) 
+    if (switch_user)
       SAYF("[!] Note: under cygwin, -u is largely useless.\n");
 
 #else
 
-    if (!switch_user) 
+    if (!switch_user)
       SAYF("[!] Consider specifying -u in daemon mode (see README).\n");
 
 #endif /* ^__CYGWIN__ */
@@ -1230,12 +1231,12 @@ int main(int argc, char** argv) {
 
   if (log_file) open_log();
   if (api_sock) open_api();
-  
+
   if (daemon_mode) {
     null_fd = open("/dev/null", O_RDONLY);
     if (null_fd < 0) PFATAL("Cannot open '/dev/null'.");
   }
-  
+
   if (switch_user) drop_privs();
 
   if (daemon_mode) fork_off();
@@ -1257,3 +1258,5 @@ int main(int argc, char** argv) {
   return 0;
 
 }
+
+#endif
