@@ -224,7 +224,18 @@ static inline u8* DFL_ck_memdup_str(u8* mem, u32 size) {
   if (!mem || !size) return NULL;
 
   ALLOC_CHECK_SIZE(size);
-  ret = malloc(size + ALLOC_OFF + 1);
+
+  /* 
+   * Adding extra 20 bytes.  Now ASAN does not complain in lookup_hdr function
+   * about heap-buffer-overflow (well most of the time). 
+   *
+   * This number (20) is estimated by looking at dump in gdb. See #1 in this repo.
+   *
+   * Before: 
+   * ret = malloc(size + ALLOC_OFF + 1);
+   */
+  ret = malloc(size + ALLOC_OFF + 1 + 20);
+
   ALLOC_CHECK_RESULT(ret, size);
   
   ret += ALLOC_OFF;
